@@ -83,6 +83,9 @@ cd ~/.claude/skills && git pull
 |---|---|
 | [`FlowForge`](FlowForge) | Süreç, mimari veya kavramları çizmek/görselleştirmek istendiğinde (akış şeması, mimari diyagramı, karşılaştırma diyagramı vb.) kullanılır. Grafik/plot istekleri veya sanatsal görsel istekleri için değildir. |
 | [`graphify`](graphify) | Herhangi bir girdiyi (kod, döküman, makale, görsel, video) kalıcı bir bilgi grafiğine dönüştürür; kod tabanı, mimari veya dosya ilişkileri hakkında soru sorulduğunda, özellikle `graphify-out/` mevcutsa kullanılır. Tetikleyici: `/graphify`. |
+| [`codebase-memory`](codebase-memory) | Yapısal kod sorguları için kod bilgi grafiğini kullanır: mimariyi keşfetme, çağıran/çağrılan izleme, etki analizi, ölü kod, Cypher sorguları. |
+| [`i-have-adhd`](i-have-adhd) | Çıktıyı ADHD'li okuyucuya göre şekillendirir: ilk satır yapılacak eylem, numaralı adımlar, tek somut sonraki adım. `/i-have-adhd` ile açılır, "stop adhd mode" ile kapanır. Always-on hook için `sh i-have-adhd/install.sh` (skill + hook + `settings.json` girdisini kurar). |
+| [`test-driven-development-2`](test-driven-development-2) | `test-driven-development`'ın alternatif sürümü (aynı `name`, daha kısa açıklama); hangisini kullanacağına göre birini seç. |
 | [`writing-skills`](writing-skills) | Yeni skill oluştururken, mevcut skill'leri düzenlerken veya dağıtımdan önce skill'lerin çalıştığını doğrularken kullanılır. |
 
 ---
@@ -90,3 +93,5 @@ cd ~/.claude/skills && git pull
 *Bu repo `AllSkills.zip` (2026-08-06 tarihli) içeriğinden 2026-08-21'de oluşturulmuştur. Skill setinde değişiklik olursa hem ilgili skill klasörünü hem bu README'yi güncelleyin.*
 
 *2026-08-21: `graphify` skill'i `~/.claude/skills`'ten eklendi.*
+
+*2026-10-21: `i-have-adhd`, `codebase-memory` ve `test-driven-development-2` eklendi. `api-and-interface-design`, `security-and-hardening` ve `source-driven-development` repodaki yeni sürümleriyle yerel `~/.claude/skills` ile eşitlendi. `synced/` klasörü (Claude uygulaması tarafından yönetilir) bilerek dışarıda bırakıldı.*
