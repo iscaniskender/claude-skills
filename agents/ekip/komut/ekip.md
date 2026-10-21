@@ -1,5 +1,5 @@
 ---
-description: Bir işi yedi rollü geliştirme ekibine ver. Kullanım - /ekip azure 1234  veya  /ekip <sözlü anlatım>
+description: Bir işi sekiz rollü geliştirme ekibine ver. Kullanım - /ekip azure 1234  veya  /ekip <sözlü anlatım>
 argument-hint: azure <work-item-no> | <işin sözlü anlatımı>
 ---
 
@@ -17,7 +17,7 @@ Girdi: $ARGUMENTS
    kabul kriterleri, repro adımları). Okunamıyorsa dur ve iş sahibine söyle.
    Aksi halde kaynak `[KAYNAK: SOZLU]` olur ve girdi işin anlatımıdır.
 2. Subagent'lar kurulu değilse (Agent aracında `prd-uzmani` vb. görünmüyorsa) dur ve
-   iş sahibine `sh ~/.claude/skills/agents/ekip/install.sh` komutunu çalıştırmasını söyle.
+   iş sahibine claude-skills deposundaki `agents/ekip/install.sh` komutunu çalıştırmasını söyle.
 3. GÖREV 1 (hızlı yol kararı) ile başla.
 4. Her devirde iş sahibine tek satırlık durum yaz (örn. "PRD Uzmanı çalışıyor").
 
@@ -31,6 +31,7 @@ Girdi: $ARGUMENTS
 | Kod Uzmanı | `kod-uzmani` | sonnet |
 | Güvenlik Uzmanı | `guvenlik-uzmani` | opus |
 | Kod Kontrol Uzmanı | `kod-kontrol` | sonnet |
+| Yayın Uzmanı | `yayin-uzmani` | sonnet |
 
 ---
 
@@ -103,6 +104,12 @@ soruları iş sahibine aynen ilet, cevabı alınca PRD Uzmanı'nı cevaplarla ye
   migration çalıştırma); yoksa "yok".
 - **Azure önerisi** (yalnız Azure işlerinde): work item'a ne yazılmasını önerdiğin, tek satır.
 Son satır: `[DURUM: TAMAM]`
+Teslimin sonuna "PR açmamı ister misin?" diye tek satır eklersin.
+
+### GÖREV 6: Yayın (yalnız iş sahibi "PR aç" derse)
+İş sahibi açıkça isterse `yayin-uzmani`'ni `[DURUM: YAYIN]` ile çağır; prompt'a dal adı,
+ana dal, kaynak (`[KAYNAK: ...]`) ve GÖREV 4 teslim özetini tam metin ver. Dönen PR adresini
+iş sahibine ilet. Son satır: `[DURUM: YAYIN-TAMAM]`. İş sahibi istemeden çağırma.
 
 ### GÖREV 5: Soru ve eskalasyon
 Bir subagent `[DURUM: SORU]` dönerse:
@@ -120,6 +127,7 @@ Kararını tek cümleyle gerekçelendir. "Bence iyi görünüyor" yasak; ya onay
 ## Tüm ekip için kesin sınırlar
 - Veritabanına bağlanıp veri veya şema oluşturulmaz, değiştirilmez, silinmez.
 - main/master'a doğrudan yazılmaz; birleştirme ve deploy yapılmaz.
+- Push ve PR yalnızca Yayın Uzmanı tarafından, iş sahibi istediğinde, iş dalı için yapılır.
 - Azure DevOps'a hiçbir şey yazılmaz (yorum, durum, alan, yeni work item).
 - Bunların hepsi yalnızca iş sahibinin açık onayıyla yapılır.
 - Azure işlerinde work item numarası dal adına (`feature/1234-kisa-ad`) ve her

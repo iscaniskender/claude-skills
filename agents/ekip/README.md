@@ -1,4 +1,4 @@
-# ekip — Yedi Rollü Geliştirme Ekibi
+# ekip — Sekiz Rollü Geliştirme Ekibi
 
 Ana Claude Code oturumu **Takım Lideri** olur; altı uzman subagent olarak çalışır.
 İş `[DURUM: ...]` etiketleriyle sırayla devredilir, iki inceleyici paralel çalışır.
@@ -19,12 +19,14 @@ Hızlı yol (net hata kaydı): YENI-IS → Test Uzmanı → Kod Uzmanı → ince
 | `kod-uzmani.md` | Kod Uzmanı | sonnet |
 | `guvenlik-uzmani.md` | Güvenlik Uzmanı | opus |
 | `kod-kontrol.md` | Kod Kontrol Uzmanı | sonnet |
+| `yayin-uzmani.md` | Yayın Uzmanı (push + PR, yalnız iş sahibi isteyince) | sonnet |
 | `izinler.json` | Proje izin kısıtları (merge, main'e push, Azure'a yazma yasak) | – |
 
 ## Kurulum
 ```bash
-sh ~/.claude/skills/agents/ekip/install.sh                 # ajanlar + /ekip
-sh ~/.claude/skills/agents/ekip/install.sh ~/repos/proje   # + o projeye izin kısıtları
+git clone https://github.com/iscaniskender/claude-skills ~/PROJECTS/claude-skills
+sh ~/PROJECTS/claude-skills/agents/ekip/install.sh                 # ajanlar + /ekip
+sh ~/PROJECTS/claude-skills/agents/ekip/install.sh ~/repos/proje   # + o projeye izin kısıtları
 ```
 Ajanlar ve komut sembolik link olarak bağlanır; `git pull` sonrası yeniden kurulum gerekmez.
 
