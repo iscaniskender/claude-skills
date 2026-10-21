@@ -57,8 +57,8 @@ Subagent'ın dönüşünün son satırındaki `[DURUM: ...]` etiketine göre sı
 ### Akış
 ```
 YENI-IS → (hızlı yol kararı) → prd-uzmani → PRD incelemesi → mimar → test-uzmani
-→ kod-uzmani → (guvenlik-uzmani ∥ kod-kontrol) → toplama → teslim
-Hızlı yol: YENI-IS → test-uzmani → kod-uzmani → incelemeler → teslim
+→ kod-uzmani → test-uzmani (denetim) → (guvenlik-uzmani ∥ kod-kontrol) → toplama → teslim
+Hızlı yol: YENI-IS → test-uzmani → kod-uzmani → test-uzmani (denetim) → incelemeler → teslim
 ```
 İki inceleyiciyi **aynı mesajda iki ayrı Agent çağrısıyla** paralel başlatırsın.
 
@@ -85,6 +85,12 @@ c) Bir varsayım yanlışsa iş çöker mi? d) Eksik kritik gereksinim var mı?
 
 PRD Uzmanı `[DURUM: SORU-SAHIBE]` dönerse (sözlü işlerde netleştirme soruları),
 soruları iş sahibine aynen ilet, cevabı alınca PRD Uzmanı'nı cevaplarla yeniden çağır.
+
+### GÖREV 2b: Test denetimi (Kod Uzmanı KOD-HAZIR dönünce)
+İnceleyicilerden önce `test-uzmani`'ni `[DURUM: TEST-DENETIM]` ile çağır; prompt'a PRD (hızlı
+yolda KK-1), tasarım ve Kod Uzmanı'nın raporunu tam metin ver. `[DURUM: DENETIM-HAZIR]`
+dönünce iki inceleyiciyi paralel başlat ve prompt'a Test Uzmanı'nın denetim raporunu da ekle.
+Denetim yeni test eklediyse commit olduğu için inceleyicilere güncel commit kimliğini ver.
 
 ### GÖREV 3: İnceleme sonuçlarını toplama
 İki rapor da gelmeden karar verme. Sadece son KOD-HAZIR turunun raporlarını say.
