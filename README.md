@@ -50,7 +50,6 @@ cd ~/.claude/skills && git pull
 | [`subagent-driven-development`](subagent-driven-development) | Bağımsız görevleri içeren uygulama planlarını mevcut oturumda subagent'larla yürütür. |
 | [`dispatching-parallel-agents`](dispatching-parallel-agents) | Paylaşılan durum veya sıralı bağımlılık olmadan çalışılabilecek 2+ bağımsız görev olduğunda kullanılır. |
 | [`using-git-worktrees`](using-git-worktrees) | Mevcut çalışma alanından izolasyon gerektiren özellik çalışmalarına başlarken izole bir çalışma alanı sağlar. |
-
 ### Kalite ve İnceleme
 
 | Skill | Ne zaman kullanılır |
@@ -88,6 +87,15 @@ cd ~/.claude/skills && git pull
 | [`test-driven-development-2`](test-driven-development-2) | `test-driven-development`'ın alternatif sürümü (aynı `name`, daha kısa açıklama); hangisini kullanacağına göre birini seç. |
 | [`writing-skills`](writing-skills) | Yeni skill oluştururken, mevcut skill'leri düzenlerken veya dağıtımdan önce skill'lerin çalıştığını doğrularken kullanılır. |
 
+## Agent'lar
+
+Subagent tanımları `agents/` altında, her ekip kendi klasöründe durur. Skill değildirler;
+kurulum betiği ile `~/.claude/agents` (ve varsa komutları `~/.claude/commands`) altına bağlanırlar.
+
+| Klasör | Ne yapar |
+|---|---|
+| [`agents/ekip`](agents/ekip) | Yedi rollü geliştirme ekibi: Takım Lideri (`/ekip` komutu) + PRD, Mimar, Test, Kod, Güvenlik, Kod Kontrol subagent'ları. `/ekip azure <no>` veya `/ekip <anlatım>`. Kurulum: `sh agents/ekip/install.sh` (proje yolu verilirse izin kısıtlarını da ekler). |
+
 ---
 
 *Bu repo `AllSkills.zip` (2026-08-06 tarihli) içeriğinden 2026-08-21'de oluşturulmuştur. Skill setinde değişiklik olursa hem ilgili skill klasörünü hem bu README'yi güncelleyin.*
@@ -95,3 +103,5 @@ cd ~/.claude/skills && git pull
 *2026-08-21: `graphify` skill'i `~/.claude/skills`'ten eklendi.*
 
 *2026-10-21: `i-have-adhd`, `codebase-memory` ve `test-driven-development-2` eklendi. `api-and-interface-design`, `security-and-hardening` ve `source-driven-development` repodaki yeni sürümleriyle yerel `~/.claude/skills` ile eşitlendi. `synced/` klasörü (Claude uygulaması tarafından yönetilir) bilerek dışarıda bırakıldı.*
+
+*2026-10-21: `agents/` klasörü açıldı; `agents/ekip` (yedi rollü geliştirme ekibi: 6 subagent + `/ekip` komutu) eklendi.*

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git merge:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push origin main:*)",
+      "Bash(git push origin master:*)",
+      "Bash(az boards work-item create:*)",
+      "Bash(az boards work-item update:*)",
+      "Bash(az boards work-item delete:*)",
+      "Bash(az boards work-item relation:*)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(git branch -D:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(rm -rf:*)"
+    ]
+  }
+}
