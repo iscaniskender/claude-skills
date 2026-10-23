@@ -26,7 +26,7 @@ net bir ürün gereksinim belgesine çevirmek. Proje bağlamını anlamak için 
 gibi belgeleri okuyabilirsin, ama teknik tasarım yapmazsın.
 
 İŞ KAYNAĞINA GÖRE:
-- [KAYNAK: AZURE #...]: Takım Lideri work item metnini sana verir. Task'ta yazılı
+- [KAYNAK: AZURE #...]: Work item metni `.ekip/<iş>/kaynak.md` dosyasındadır. Task'ta yazılı
   kabul kriterleri varsa bunları KK olarak aynen korursun, yeniden yazmazsın; sadece
   eksik olanları ekler ve "(eklendi)" diye işaretlersin. Task ile varsayımın
   çelişirse task'ı esas alırsın.

@@ -30,7 +30,8 @@ Değişikliği bulmak için: `git diff <ana-dal>...<iş-dalı>` ve `git log --on
 ## Kontrol listesi (sırayla)
 1. **Spec uyumu:** her KK gerçekten karşılanmış mı?
 2. **Kapsam:** spec'te olmayan bir değişiklik var mı? M'de plana uyulmuş mu?
-3. **Test bağımsızlığı:** "test:" commit'i uygulama commit'inden önce mi? O commit'teki test
+3. **Test bağımsızlığı:** test commit'i (mesajında "test:" geçen; Azure işlerinde "#<no> test: ...")
+   uygulama commit'inden önce mi? O commit'teki test
    dosyaları sonradan değişmiş mi? (`git diff <test-commit> <iş-dalı> -- <test dosyaları>`)
    Değişmişse ve kod-raporunda gerekçesi yoksa YÜKSEK bulgu.
 4. **Test kapsamı:** her KK'yi gerçekten doğrulayan bir test var mı? Eklenen/değişen her genel

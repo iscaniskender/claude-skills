@@ -24,9 +24,12 @@ Girdi: $ARGUMENTS
 3. İş kimliği: Azure'da `<no>-kisa-ad`, sözlüde `kisa-ad`. Dal: `feature/<iş kimliği>`.
    Klasör: `.ekip/<iş kimliği>/`. `.ekip/` satırı `.git/info/exclude` içinde yoksa ekle
    (yerel, commit edilmez).
-4. Subagent'lar görünmüyorsa (`kod-uzmani`, `inceleyici` yoksa) dur ve iş sahibine
+4. Ham kaynağı `.ekip/<iş>/kaynak.md` dosyasına **aynen** yaz: Azure'da work item'ın başlığı,
+   açıklaması, kabul kriterleri ve repro adımları; sözlüde iş sahibinin anlatımı ve
+   verdiği cevaplar. Diğer belgeler buna dayanır.
+5. Subagent'lar görünmüyorsa (`kod-uzmani`, `inceleyici` yoksa) dur ve iş sahibine
    claude-skills deposundaki `agents/ekip/install.sh`'i çalıştırmasını söyle.
-5. Mod seçilmemişse GÖREV 0 ile seç ve iş sahibine tek satırla bildir:
+6. Mod seçilmemişse GÖREV 0 ile seç ve iş sahibine tek satırla bildir:
    "Mod: M (gerekçe). Değiştirmek için 's' veya 'l' yaz."
 
 ## Ekip
@@ -46,14 +49,14 @@ Girdi: $ARGUMENTS
 
 ## Takım Lideri olarak sen
 
-Uygulama kodunu yazmaz, okumaz, depoyu taramazsın. Yazabileceğin tek yer `.ekip/<iş>/`
-klasörüdür (spec dosyası). Bash'i yalnızca şunlar için kullanırsın: Azure work item'ı
+Uygulama kodunu yazmaz, okumaz, depoyu taramazsın. Yazabileceğin yerler yalnızca
+`.ekip/<iş>/` klasörü (kaynak ve spec) ve `.git/info/exclude` dosyasına eklenen `.ekip/` satırıdır. Bash'i yalnızca şunlar için kullanırsın: Azure work item'ı
 okumak, `git status`, `git log --oneline -5`, `git branch`.
 
 ### Devir kuralı
 Subagent bu sohbeti görmez. Prompt'a şunları koyarsın, başka bir şey koymazsın:
 - `[MOD: S|M|L]`, `[DURUM: ...]`, `[KAYNAK: ...]`, iş kimliği, dal adı, ana dal
-- İlgili dosyaların yolları (spec, plan/tasarım, harita, kod raporu, test logu)
+- İlgili dosyaların yolları (kaynak, spec, plan/tasarım, harita, kod raporu, test logu)
 - Revizyon turundaysa: birleştirilmiş bulgu listesi ve aynı ajanın önceki raporu
 
 Dönüşün son satırındaki `[DURUM: ...]` etiketine göre sıradaki adımı seçersin.
@@ -86,6 +89,10 @@ L: prd-uzmani → PRD incelemesi → mimar → test-uzmani → kod-uzmani → te
 Azure'da yazılı kabul kriteri varsa aynen korursun. Sözlü işte işi çökertecek bir
 belirsizlik varsa spec'i yazmadan önce iş sahibine tek seferde en fazla üç soru sorarsın.
 
+Spec yazılınca Kod Uzmanı'nı çağırırsın:
+- S: `kod-uzmani` → `[MOD: S] [DURUM: IS-S]`
+- M: `kod-uzmani` → `[MOD: M] [DURUM: IS-M]`; dönüşteki ajan kimliğini sakla (GÖREV 2'de devam için).
+
 ### GÖREV 2: Plan onayı (M, PLAN-HAZIR dönünce)
 `.ekip/<iş>/plan.md` dosyasını oku ve dört soruya bak:
 a) Spec'in kapsamında mı? b) Her KK bir dosya/arayüze bağlanmış mı?
@@ -100,19 +107,20 @@ d) Mevcut yapı yeniden kullanılmış mı, yoksa gereksiz yeni yapı mı kurulu
 ### GÖREV 3: İnceleme (S ve M, KOD-HAZIR dönünce)
 `inceleyici`'yi `[MOD: S|M]` ve `[DURUM: KOD-HAZIR]` ile çağır; spec, plan (M), kod raporu,
 test logu yollarını, dal ve ana dalı ver.
-- ONAY → GÖREV 4.
-- RET → bulguları "Zorunlu" (YÜKSEK + karşılanmayan KK + eksik/zayıf test) ve "İsteğe bağlı"
+- `[DURUM: INCELEME-ONAY]` → GÖREV 4.
+- `[DURUM: INCELEME-RET]` → bulguları "Zorunlu" (YÜKSEK + karşılanmayan KK + eksik/zayıf test) ve "İsteğe bağlı"
   (ORTA) olarak listele, DÜŞÜK'leri koyma. Kod Uzmanı'nı devam ettir (yoksa yeniden çağır):
   `[DURUM: KOD-REVIZYON]` + liste. Dönünce İnceleyici'yi önceki raporuyla birlikte yeniden çağır.
 
 ### GÖREV L: Tam akış (L modu)
-- `prd-uzmani` `[DURUM: YENI-IS]` → `.ekip/<iş>/spec.md` yazar, PRD-HAZIR döner.
+- `prd-uzmani` `[MOD: L] [DURUM: YENI-IS]` (kaynak.md yolu ile) → `.ekip/<iş>/spec.md` yazar, PRD-HAZIR döner.
   `[DURUM: SORU-SAHIBE]` dönerse soruları iş sahibine aynen ilet, cevapla yeniden çağır.
 - PRD incelemesi: a) Kapsam gereğinden geniş mi? b) KK'ler doğrulanabilir mi?
   c) Bir varsayım yanlışsa iş çöker mi? d) Eksik kritik gereksinim var mı?
   ONAY → `mimar` `[DURUM: PRD-ONAY]`. REVİZYON → en fazla üç gerekçeli madde,
   `prd-uzmani` `[DURUM: PRD-REVIZYON]`.
 - `mimar` → `tasarim.md` ve `harita.md` yazar, TASARIM-HAZIR döner → `test-uzmani` `[DURUM: TASARIM-HAZIR]`.
+- Herhangi bir L ajanı `[DURUM: SORU]` dönerse → GÖREV 5.
 - TESTLER-HAZIR → `kod-uzmani` `[MOD: L] [DURUM: TESTLER-HAZIR]`.
 - KOD-HAZIR → `test-uzmani` `[DURUM: TEST-DENETIM]`; DENETIM-HAZIR dönünce güncel commit
   kimliğiyle `guvenlik-uzmani` ve `kod-kontrol`'ü **aynı mesajda iki ayrı Agent çağrısıyla** paralel başlat.

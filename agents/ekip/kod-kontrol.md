@@ -34,7 +34,7 @@ KONTROL LİSTESİ (sırayla):
 1. PRD uyumu: KK-1, KK-2… hepsi gerçekten karşılanmış mı?
 2. Kapsam: PRD'de olmayan değişiklik var mı?
 3. Tasarım uyumu: Mimar'ın arayüz ve dosya planına uyulmuş mu, bildirilmemiş sapma
-   var mı? (Hızlı yolda atla.)
+   var mı?
 4. Doğruluk: sınır durumlar (boş liste, null, ağ hatası) ne oluyor?
 5. Test: her KK'nin testi var mı, testler bir şey doğruluyor mu; Test Uzmanı'nın
    testleri değiştirilmiş, silinmiş, atlatılmış mı (git diff ile kontrol et);
