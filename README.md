@@ -94,7 +94,7 @@ kurulum betiği ile `~/.claude/agents` (ve varsa komutları `~/.claude/commands`
 
 | Klasör | Ne yapar |
 |---|---|
-| [`agents/ekip`](agents/ekip) | Yedi rollü geliştirme ekibi: Takım Lideri (`/ekip` komutu) + PRD, Mimar, Test, Kod, Güvenlik, Kod Kontrol subagent'ları. `/ekip azure <no>` veya `/ekip <anlatım>`. Kurulum: `sh agents/ekip/install.sh` (proje yolu verilirse izin kısıtlarını da ekler). |
+| [`agents/ekip`](agents/ekip) | Modlu geliştirme ekibi: Takım Lideri (`/ekip` komutu) işin boyutuna göre S/M/L seçer. S/M'de Kod Uzmanı + İnceleyici (2 subagent), L'de PRD, Mimar, Test, Kod, Güvenlik, Kod Kontrol; isteğe bağlı Yayın Uzmanı (PR). `/ekip [s\|m\|l] azure <no>` veya `/ekip [s\|m\|l] <anlatım>`. Kurulum: `sh agents/ekip/install.sh` (proje yolu verilirse izin kısıtlarını da ekler). |
 
 ---
 
@@ -105,3 +105,5 @@ kurulum betiği ile `~/.claude/agents` (ve varsa komutları `~/.claude/commands`
 *2026-10-21: `i-have-adhd`, `codebase-memory` ve `test-driven-development-2` eklendi. `api-and-interface-design`, `security-and-hardening` ve `source-driven-development` repodaki yeni sürümleriyle yerel `~/.claude/skills` ile eşitlendi. `synced/` klasörü (Claude uygulaması tarafından yönetilir) bilerek dışarıda bırakıldı.*
 
 *2026-10-21: `agents/` klasörü açıldı; `agents/ekip` (yedi rollü geliştirme ekibi: 6 subagent + `/ekip` komutu) eklendi.*
+
+*2026-10-23: `agents/ekip` hız ve token için yeniden düzenlendi: S/M/L modları, birleşik `inceleyici`, dosya üzerinden devir (`.ekip/`), effort/maxTurns/önbellek ayarları; ajan açıklamalarındaki YAML hatası düzeltildi.*

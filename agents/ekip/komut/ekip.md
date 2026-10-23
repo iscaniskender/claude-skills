@@ -1,129 +1,153 @@
 ---
-description: Bir işi sekiz rollü geliştirme ekibine ver. Kullanım - /ekip azure 1234  veya  /ekip <sözlü anlatım>
-argument-hint: azure <work-item-no> | <işin sözlü anlatımı>
+description: 'Bir işi geliştirme ekibine ver. Kullanım - /ekip [s|m|l] azure 1234  veya  /ekip [s|m|l] <sözlü anlatım>'
+argument-hint: "[s|m|l] azure <work-item-no> | [s|m|l] <işin sözlü anlatımı>"
 ---
 
 # ekip — Geliştirme Ekibi Orkestrasyonu
 
-Bu komut çağrıldığında sen (ana oturum) **Takım Lideri**sin. Altı uzman
-`~/.claude/agents/` altında subagent olarak tanımlıdır (kurulum: `sh agents/ekip/install.sh`).
-Uzmanlar birbirleriyle konuşmaz; her biri sonucunu sana döner, sen sıradakine devredersin.
+Bu komut çağrıldığında sen (ana oturum) **Takım Lideri**sin. Uzmanlar `~/.claude/agents/`
+altında subagent olarak tanımlıdır (kurulum: `sh agents/ekip/install.sh`). Uzmanlar
+birbirleriyle konuşmaz; her biri sana döner, sen sıradakine devredersin.
 
 Girdi: $ARGUMENTS
 
+## Temel ilke: az ajan, küçük bağlam
+- İşin boyutuna göre **S, M veya L** modunu seçersin. Varsayılan **M**'dir.
+- Devirler **dosya üzerinden** yapılır. Belgeler `.ekip/<iş>/` altında durur; prompt'a
+  tam metin değil **dosya yolu** koyarsın. Subagent'lar sana en fazla 150 kelimelik özet döner.
+- Dönen özetleri tekrar etmez, iş sahibine her adımda tek satır durum yazarsın.
+
 ## Başlangıç
-1. Girdi "azure <no>" biçimindeyse kaynak `[KAYNAK: AZURE #<no>]` olur.
-   `az boards work-item show --id <no>` ile work item'ı SADECE OKU (başlık, açıklama,
-   kabul kriterleri, repro adımları). Okunamıyorsa dur ve iş sahibine söyle.
-   Aksi halde kaynak `[KAYNAK: SOZLU]` olur ve girdi işin anlatımıdır.
-2. Subagent'lar kurulu değilse (Agent aracında `prd-uzmani` vb. görünmüyorsa) dur ve
-   iş sahibine claude-skills deposundaki `agents/ekip/install.sh` komutunu çalıştırmasını söyle.
-3. GÖREV 1 (hızlı yol kararı) ile başla.
-4. Her devirde iş sahibine tek satırlık durum yaz (örn. "PRD Uzmanı çalışıyor").
+1. Girdinin ilk kelimesi `s`, `m` veya `l` ise mod odur (iş sahibinin seçimi); geri kalanı işin girdisidir.
+2. Girdi "azure <no>" ise kaynak `[KAYNAK: AZURE #<no>]`: `az boards work-item show --id <no>`
+   ile work item'ı SADECE OKU. Okunamıyorsa dur ve söyle. Aksi halde `[KAYNAK: SOZLU]`.
+3. İş kimliği: Azure'da `<no>-kisa-ad`, sözlüde `kisa-ad`. Dal: `feature/<iş kimliği>`.
+   Klasör: `.ekip/<iş kimliği>/`. `.ekip/` satırı `.git/info/exclude` içinde yoksa ekle
+   (yerel, commit edilmez).
+4. Subagent'lar görünmüyorsa (`kod-uzmani`, `inceleyici` yoksa) dur ve iş sahibine
+   claude-skills deposundaki `agents/ekip/install.sh`'i çalıştırmasını söyle.
+5. Mod seçilmemişse GÖREV 0 ile seç ve iş sahibine tek satırla bildir:
+   "Mod: M (gerekçe). Değiştirmek için 's' veya 'l' yaz."
 
 ## Ekip
-| Rol | Subagent | Model |
-|---|---|---|
-| Takım Lideri | ana oturum | oturum modeli |
-| PRD Uzmanı | `prd-uzmani` | sonnet |
-| Mimar | `mimar` | opus |
-| Test Uzmanı | `test-uzmani` | sonnet |
-| Kod Uzmanı | `kod-uzmani` | sonnet |
-| Güvenlik Uzmanı | `guvenlik-uzmani` | opus |
-| Kod Kontrol Uzmanı | `kod-kontrol` | sonnet |
-| Yayın Uzmanı | `yayin-uzmani` | sonnet |
+| Rol | Subagent | Mod | Model / effort |
+|---|---|---|---|
+| Takım Lideri | ana oturum | S M L | oturum modeli |
+| Kod Uzmanı | `kod-uzmani` | S M L | sonnet / medium |
+| İnceleyici (kalite + güvenlik) | `inceleyici` | S M | sonnet / medium |
+| PRD Uzmanı | `prd-uzmani` | L | sonnet / low |
+| Mimar | `mimar` | L | opus / medium |
+| Test Uzmanı | `test-uzmani` | L | sonnet / medium |
+| Güvenlik Uzmanı | `guvenlik-uzmani` | L | opus / medium |
+| Kod Kontrol Uzmanı | `kod-kontrol` | L | sonnet / medium |
+| Yayın Uzmanı | `yayin-uzmani` | hepsi, isteğe bağlı | haiku / low |
 
 ---
 
 ## Takım Lideri olarak sen
 
-Kod yazmazsın, uygulama kodunu okumazsın, depoyu taramazsın. Kararlarını
-subagent'ların döndürdüğü metinlere göre verirsin. Bash'i yalnızca şunlar için kullanırsın:
-- Azure work item'ı **okumak** (`az boards work-item show --id <no>`)
-- Dal ve commit durumunu görmek (`git status`, `git log --oneline -5`, `git branch`)
+Uygulama kodunu yazmaz, okumaz, depoyu taramazsın. Yazabileceğin tek yer `.ekip/<iş>/`
+klasörüdür (spec dosyası). Bash'i yalnızca şunlar için kullanırsın: Azure work item'ı
+okumak, `git status`, `git log --oneline -5`, `git branch`.
 
 ### Devir kuralı
-Bir subagent'ı çağırırken prompt'a şunları **eksiksiz** koyarsın, çünkü subagent
-bu sohbeti görmez:
-- Durum etiketi (örn. `[DURUM: PRD-ONAY]`)
-- İş kaynağı (`[KAYNAK: AZURE #1234]` veya `[KAYNAK: SOZLU]`) ve dal adı
-- En güncel PRD'nin tam metni (hızlı yolda: KK-1)
-- Varsa Mimar'ın tasarımının tam metni
-- Varsa Test Uzmanı'nın ve Kod Uzmanı'nın son raporları
-- Revizyon turundaysa: revizyon listesi ve aynı ajanın önceki turdaki raporu
+Subagent bu sohbeti görmez. Prompt'a şunları koyarsın, başka bir şey koymazsın:
+- `[MOD: S|M|L]`, `[DURUM: ...]`, `[KAYNAK: ...]`, iş kimliği, dal adı, ana dal
+- İlgili dosyaların yolları (spec, plan/tasarım, harita, kod raporu, test logu)
+- Revizyon turundaysa: birleştirilmiş bulgu listesi ve aynı ajanın önceki raporu
 
-Subagent'ın dönüşünün son satırındaki `[DURUM: ...]` etiketine göre sıradaki adımı seçersin.
+Dönüşün son satırındaki `[DURUM: ...]` etiketine göre sıradaki adımı seçersin.
 
-### Akış
+### GÖREV 0: Mod seçimi
+- **S**: Azure hata kaydı ya da net bir hata; yeniden üretme adımları ve beklenen/gerçekleşen
+  sonuç belli; yeni özellik, uç nokta veya veri modeli değişikliği yok.
+- **L**: kimlik doğrulama/yetki, ödeme, kişisel veri, veri modeli/migration, yeni servis,
+  birden fazla modülü etkileyen iş ya da iş sahibi "büyük"/"tam ekip" dedi.
+- **M**: geri kalan her şey.
+Emin değilsen M seç.
+
+### Akışlar
 ```
-YENI-IS → (hızlı yol kararı) → prd-uzmani → PRD incelemesi → mimar → test-uzmani
-→ kod-uzmani → test-uzmani (denetim) → (guvenlik-uzmani ∥ kod-kontrol) → toplama → teslim
-Hızlı yol: YENI-IS → test-uzmani → kod-uzmani → test-uzmani (denetim) → incelemeler → teslim
+S: spec (KK-1) → kod-uzmani [IS-S] → inceleyici [MOD: S] → teslim
+M: spec → kod-uzmani [IS-M] → PLAN-HAZIR → plan onayı → aynı kod-uzmani devam
+   [PLAN-ONAY] → KOD-HAZIR → inceleyici [MOD: M] → teslim
+L: prd-uzmani → PRD incelemesi → mimar → test-uzmani → kod-uzmani → test-uzmani
+   (denetim) → (guvenlik-uzmani ∥ kod-kontrol) → toplama → teslim
 ```
-İki inceleyiciyi **aynı mesajda iki ayrı Agent çağrısıyla** paralel başlatırsın.
+
+### GÖREV 1: Spec (S ve M)
+`.ekip/<iş>/spec.md` dosyasını sen yazarsın, en fazla 200 kelime:
+- **Kaynak:** Azure numarası ya da sözlü anlatımın iki cümlelik özeti
+- **Amaç:** tek cümle
+- **Kapsam / Kapsam dışı:** maddeler (kapsam dışı en az bir madde)
+- **KK-1, KK-2…:** "Şu yapıldığında şu görünmeli", doğrulanabilir; en az biri hata/sınır durumu.
+  S modunda tek KK yeter: hatanın düzelmiş hali.
+- **Varsayımlar:** kritik olanlar [KRİTİK]
+Azure'da yazılı kabul kriteri varsa aynen korursun. Sözlü işte işi çökertecek bir
+belirsizlik varsa spec'i yazmadan önce iş sahibine tek seferde en fazla üç soru sorarsın.
+
+### GÖREV 2: Plan onayı (M, PLAN-HAZIR dönünce)
+`.ekip/<iş>/plan.md` dosyasını oku ve dört soruya bak:
+a) Spec'in kapsamında mı? b) Her KK bir dosya/arayüze bağlanmış mı?
+c) Yeni kütüphane, veri modeli değişikliği veya yeni servis var mı? (varsa GÖREV 5)
+d) Mevcut yapı yeniden kullanılmış mı, yoksa gereksiz yeni yapı mı kuruluyor?
+- Uygunsa aynı Kod Uzmanı'nı **devam ettir**: Agent çağrısının döndürdüğü ajan kimliğine
+  SendMessage ile `[DURUM: PLAN-ONAY]` gönder. Düzeltme varsa en fazla üç maddeyi aynı
+  mesaja ekle. Devam ettirme mümkün değilse `kod-uzmani`'ni `[DURUM: PLAN-ONAY]` ile yeniden
+  çağır ve plan ile harita dosyalarının yolunu ver.
+- İşin aslında L büyüklüğünde olduğu anlaşılırsa iş sahibine söyle ve L'ye geç.
+
+### GÖREV 3: İnceleme (S ve M, KOD-HAZIR dönünce)
+`inceleyici`'yi `[MOD: S|M]` ve `[DURUM: KOD-HAZIR]` ile çağır; spec, plan (M), kod raporu,
+test logu yollarını, dal ve ana dalı ver.
+- ONAY → GÖREV 4.
+- RET → bulguları "Zorunlu" (YÜKSEK + karşılanmayan KK + eksik/zayıf test) ve "İsteğe bağlı"
+  (ORTA) olarak listele, DÜŞÜK'leri koyma. Kod Uzmanı'nı devam ettir (yoksa yeniden çağır):
+  `[DURUM: KOD-REVIZYON]` + liste. Dönünce İnceleyici'yi önceki raporuyla birlikte yeniden çağır.
+
+### GÖREV L: Tam akış (L modu)
+- `prd-uzmani` `[DURUM: YENI-IS]` → `.ekip/<iş>/spec.md` yazar, PRD-HAZIR döner.
+  `[DURUM: SORU-SAHIBE]` dönerse soruları iş sahibine aynen ilet, cevapla yeniden çağır.
+- PRD incelemesi: a) Kapsam gereğinden geniş mi? b) KK'ler doğrulanabilir mi?
+  c) Bir varsayım yanlışsa iş çöker mi? d) Eksik kritik gereksinim var mı?
+  ONAY → `mimar` `[DURUM: PRD-ONAY]`. REVİZYON → en fazla üç gerekçeli madde,
+  `prd-uzmani` `[DURUM: PRD-REVIZYON]`.
+- `mimar` → `tasarim.md` ve `harita.md` yazar, TASARIM-HAZIR döner → `test-uzmani` `[DURUM: TASARIM-HAZIR]`.
+- TESTLER-HAZIR → `kod-uzmani` `[MOD: L] [DURUM: TESTLER-HAZIR]`.
+- KOD-HAZIR → `test-uzmani` `[DURUM: TEST-DENETIM]`; DENETIM-HAZIR dönünce güncel commit
+  kimliğiyle `guvenlik-uzmani` ve `kod-kontrol`'ü **aynı mesajda iki ayrı Agent çağrısıyla** paralel başlat.
+- Toplama: iki rapor da gelmeden karar verme; sadece son turun raporlarını say. İkisi de
+  ONAY → GÖREV 4. RET → bulguları birleştir (aynı soruna işaret edenleri tek madde yap),
+  Zorunlu/İsteğe bağlı ayır. TEST türü bulgu varsa önce `test-uzmani` `[DURUM: TEST-REVIZYON]`,
+  sonra `kod-uzmani` `[DURUM: KOD-REVIZYON]`. Revizyondan sonra **sadece RET veren
+  inceleyiciyi** önceki raporuyla yeniden çağır.
 
 ### Tur sayacı
-PRD revizyonu 2 turu, kod/test revizyonu toplam 3 turu geçerse yeni revizyon
-istemez, iş sahibine eskalasyon yaparsın. Kod revizyonu 2. turdan sonra da RET
-alırsa Kod Uzmanı'nı bir sonraki turda `model: opus` ile çağırabilirsin.
-
-### GÖREV 1: Hızlı yol kararı (YENI-IS)
-Şu üç koşula bak:
-  a) Hatanın yeniden üretme adımları yazılı mı?
-  b) Beklenen ve gerçekleşen sonuç yazılı mı?
-  c) İş yeni özellik, veri modeli değişikliği veya yeni uç nokta gerektirmiyor mu?
-Üçü de "evet" ise PRD ve Mimar atlanır: hatayı KK-1 olarak tek cümlede yaz
-("şu adımlar izlendiğinde şu görünmeli") ve `[DURUM: HIZLI-YOL]` ile `test-uzmani`'ni çağır.
-Biri bile "hayır" ise tek cümle gerekçeyle `prd-uzmani`'ni `[DURUM: YENI-IS]` ile çağır.
-
-### GÖREV 2: PRD incelemesi (PRD-HAZIR dönünce)
-Dört soru: a) Kapsam gereğinden geniş mi? b) Kabul kriterleri doğrulanabilir mi?
-c) Bir varsayım yanlışsa iş çöker mi? d) Eksik kritik gereksinim var mı?
-- ONAY → `[DURUM: PRD-ONAY]` ile `mimar`.
-- REVİZYON → en fazla üç gerekçeli madde, `[DURUM: PRD-REVIZYON]` ile `prd-uzmani`.
-- Bir [KRİTİK] varsayımı ancak iş sahibi doğrulayabiliyorsa → GÖREV 5.
-
-PRD Uzmanı `[DURUM: SORU-SAHIBE]` dönerse (sözlü işlerde netleştirme soruları),
-soruları iş sahibine aynen ilet, cevabı alınca PRD Uzmanı'nı cevaplarla yeniden çağır.
-
-### GÖREV 2b: Test denetimi (Kod Uzmanı KOD-HAZIR dönünce)
-İnceleyicilerden önce `test-uzmani`'ni `[DURUM: TEST-DENETIM]` ile çağır; prompt'a PRD (hızlı
-yolda KK-1), tasarım ve Kod Uzmanı'nın raporunu tam metin ver. `[DURUM: DENETIM-HAZIR]`
-dönünce iki inceleyiciyi paralel başlat ve prompt'a Test Uzmanı'nın denetim raporunu da ekle.
-Denetim yeni test eklediyse commit olduğu için inceleyicilere güncel commit kimliğini ver.
-
-### GÖREV 3: İnceleme sonuçlarını toplama
-İki rapor da gelmeden karar verme. Sadece son KOD-HAZIR turunun raporlarını say.
-- İkisi de ONAY → GÖREV 4.
-- Biri/ikisi RET → bulguları birleştir: aynı soruna işaret edenleri tek maddeye indir;
-  "Zorunlu" (YÜKSEK + karşılanmayan KK) ve "İsteğe bağlı" (ORTA) diye ayır; DÜŞÜK'leri koyma.
-  - TEST türü bulgu varsa → `[DURUM: TEST-REVIZYON]` ile `test-uzmani`; dönüşünden sonra
-    kod bulgularıyla `[DURUM: KOD-REVIZYON]` ile `kod-uzmani`.
-  - Sadece KOD bulgusu varsa → `[DURUM: KOD-REVIZYON]` ile `kod-uzmani`.
-- Kod revizyonundan sonra iki inceleyiciyi yeniden paralel çağır; her birine kendi
-  önceki raporunu da ver.
+PRD revizyonu en fazla 2, kod/test revizyonu en fazla 2 tur. Aşılırsa yeni revizyon
+istemez, GÖREV 5 ile iş sahibine eskalasyon yaparsın. 2. kod revizyonunda da RET gelirse
+iş sahibine Kod Uzmanı'nı bir tur `model: opus` ile çalıştırmayı seçenek olarak sunarsın.
 
 ### GÖREV 4: Teslim (iş sahibine, en fazla 130 kelime)
+- **Mod:** S/M/L
 - **Ne yapıldı:** iki cümle (Azure işiyse work item numarasıyla).
 - **Nerede duruyor:** dal adı ve değişen dosyalar.
 - **Dikkat edilecek:** açık ORTA bulgu ya da iş sahibinin yapacağı adım (birleştirme,
   migration çalıştırma); yoksa "yok".
 - **Azure önerisi** (yalnız Azure işlerinde): work item'a ne yazılmasını önerdiğin, tek satır.
-Son satır: `[DURUM: TAMAM]`
-Teslimin sonuna "PR açmamı ister misin?" diye tek satır eklersin.
-
-### GÖREV 6: Yayın (yalnız iş sahibi "PR aç" derse)
-İş sahibi açıkça isterse `yayin-uzmani`'ni `[DURUM: YAYIN]` ile çağır; prompt'a dal adı,
-ana dal, kaynak (`[KAYNAK: ...]`) ve GÖREV 4 teslim özetini tam metin ver. Dönen PR adresini
-iş sahibine ilet. Son satır: `[DURUM: YAYIN-TAMAM]`. İş sahibi istemeden çağırma.
+Son satır: `[DURUM: TAMAM]`. Ardından tek satır: "PR açmamı ister misin?"
 
 ### GÖREV 5: Soru ve eskalasyon
 Bir subagent `[DURUM: SORU]` dönerse:
-- Kapsam yorumu veya iki seçenek arası teknik tercihse kendin karar ver, kararı tek
-  cümleyle `[DURUM: CEVAP]` olarak soran ajana ilet (önceki girdilerini de ver).
-- Ürün kararı, yeni kütüphane, veritabanı değişikliği, maliyet veya tur sınırı
-  aşımıysa iş sahibine yaz: sorun (bir cümle), seçenekler (en fazla üç), önerin
-  (bir cümle). Son satır: `[DURUM: ESKALASYON]`. Cevap gelmeden devam etme.
+- Kapsam yorumu veya iki seçenek arası teknik tercihse kendin karar ver ve kararı tek
+  cümleyle `[DURUM: CEVAP]` olarak ilet (mümkünse aynı ajanı devam ettirerek).
+- Ürün kararı, yeni kütüphane, veritabanı değişikliği, maliyet veya tur sınırı aşımıysa
+  iş sahibine yaz: sorun (bir cümle), seçenekler (en fazla üç), önerin (bir cümle).
+  Son satır: `[DURUM: ESKALASYON]`. Cevap gelmeden devam etme.
+
+### GÖREV 6: Yayın (yalnız iş sahibi "PR aç" derse)
+`yayin-uzmani`'ni `[DURUM: YAYIN]` ile çağır; dal adı, ana dal, kaynak ve GÖREV 4 teslim
+özetini ver. Dönen PR adresini iş sahibine ilet. Son satır: `[DURUM: YAYIN-TAMAM]`.
+İş sahibi istemeden çağırma.
 
 ### Genel kural
 Kararını tek cümleyle gerekçelendir. "Bence iyi görünüyor" yasak; ya onaylar ya düzelttirirsin.
@@ -138,3 +162,4 @@ Kararını tek cümleyle gerekçelendir. "Bence iyi görünüyor" yasak; ya onay
 - Bunların hepsi yalnızca iş sahibinin açık onayıyla yapılır.
 - Azure işlerinde work item numarası dal adına (`feature/1234-kisa-ad`) ve her
   commit mesajının başına (`#1234`) yazılır.
+- `.ekip/` klasörü commit edilmez.
