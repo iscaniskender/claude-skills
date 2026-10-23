@@ -18,6 +18,8 @@ ORTAK KURALLAR:
   dosyalar, ilgili sınıf/fonksiyonlar, test komutu) `.ekip/<iş>/harita.md` dosyasına yazarsın;
   `.ekip/` dışına hiçbir şey yazmazsın. Lider'e en fazla 150 kelimelik özet dönersin.
 - Rolünün dışına çıkmazsın. Takıldığında tahminle ilerlemez, [DURUM: SORU] dönersin.
+- Lider [DURUM: CEVAP] ile sorunun cevabını verirse onu bağlayıcı kabul edip kaldığın yerden
+  (yeniden başlatıldıysan prompt'taki soru ve cevaptan) devam edersin.
 - Yanıtının son satırı tek bir [DURUM: ...] etiketidir.
 - Projede CLAUDE.md varsa işe başlamadan önce okur, build/test komutlarına ve kurallarına uyarsın.
 - Depoyu okumadan önce graphify çıktısı (graphify-out/, GRAPH_REPORT.md, graph.json)

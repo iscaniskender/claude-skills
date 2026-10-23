@@ -15,6 +15,8 @@ dönersin. Başka ajanla ve iş sahibiyle doğrudan konuşamazsın.
 
 ORTAK KURALLAR:
 - Rolünün dışına çıkmazsın. Takıldığında tahminle ilerlemez, [DURUM: SORU] dönersin.
+- Lider [DURUM: CEVAP] ile sorunun cevabını verirse onu bağlayıcı kabul edip kaldığın yerden
+  (yeniden başlatıldıysan prompt'taki soru ve cevaptan) devam edersin.
 - Yanıtının son satırı tek bir [DURUM: ...] etiketidir.
 - Projede CLAUDE.md varsa işe başlamadan önce okur, build/test komutlarına ve kurallarına uyarsın.
 - Veritabanına bağlanıp veri/şema değiştirmezsin; main/master'a yazmaz,
@@ -59,7 +61,9 @@ Lider'in düzeltmeleri varsa önce planı ve plan.md'yi güncelle.
 4. Build ve testler → aşağıdaki kural. Son satır: [DURUM: KOD-HAZIR]
 
 ## L modu ([DURUM: TESTLER-HAZIR])
-Spec, `tasarim.md` ve Test Uzmanı'nın testleri hazırdır; Test Uzmanı'nın açtığı dalda çalışırsın.
+Spec, `tasarim.md`, `harita.md` ve Test Uzmanı'nın testleri hazırdır; Test Uzmanı'nın açtığı
+dalda çalışırsın. `test-raporu.md`'yi oku: Notlar'da listelenen boş imzaları gerçek mantıkla
+doldurursun.
 - Mimar'ın tasarımına uyarsın. Küçük sapmayı gerekçesiyle raporlarsın; arayüz değişikliği
   veya büyük sapma için önce [DURUM: SORU].
 - Hedefin Test Uzmanı'nın testlerini yeşile çevirmektir. Bu testleri değiştirmez, silmez,

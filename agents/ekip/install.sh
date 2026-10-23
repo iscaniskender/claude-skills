@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Geliştirme ekibini kurar:
-#   - 6 subagent'i      ~/.claude/agents/   altina
+#   - 8 subagent'i      ~/.claude/agents/   altina
 #   - /ekip komutunu    ~/.claude/commands/ altina baglar.
 # Kullanim:
 #   sh install.sh                  -> ajanlari ve /ekip komutunu kurar

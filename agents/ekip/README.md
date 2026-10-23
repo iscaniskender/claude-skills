@@ -16,7 +16,7 @@ L: PRD Uzmanı → Lider onayı → Mimar → Test Uzmanı → Kod Uzmanı → T
 |---|---|---|
 | S | Net hata, yeni özellik/uç nokta/veri modeli yok | 2 |
 | M (varsayılan) | Geri kalan her şey | 2 (+ plan sonrası devam) |
-| L | Auth/yetki, ödeme, kişisel veri, migration, yeni servis, çok modüllü iş | 6 |
+| L | Auth/yetki, ödeme, kişisel veri, migration, yeni servis, çok modüllü iş | 7 |
 
 ## Token ve hız için alınan önlemler
 - **Dosya üzerinden devir:** spec, plan, tasarım, harita, rapor ve test logu `.ekip/<iş>/`
@@ -47,7 +47,11 @@ L: PRD Uzmanı → Lider onayı → Mimar → Test Uzmanı → Kod Uzmanı → T
 | `guvenlik-uzmani.md` | Güvenlik Uzmanı | L | opus / medium |
 | `kod-kontrol.md` | Kod Kontrol Uzmanı | L | sonnet / medium |
 | `yayin-uzmani.md` | Yayın Uzmanı (push + PR, yalnız iş sahibi isteyince) | hepsi | haiku / low |
-| `izinler.json` | Proje izin kısıtları (merge, main'e push, Azure'a yazma yasak) | – | – |
+| `izinler.json` | Proje izin kısıtları (merge, main'e push, PR birleştirme/onay, Azure'a yazma yasak) | – | – |
+
+`izinler.json` komut önekiyle eşleşir; bayrağı sona koyan varyantlar (örn. `git push origin x
+--force-with-lease`, `az repos pr create --auto-complete`) kuralları aşar. Bu durumlarda
+`git push:*` için ask kuralı ve Yayın Uzmanı'nın prompt yasakları koruyucudur.
 
 ## Kurulum
 ```bash

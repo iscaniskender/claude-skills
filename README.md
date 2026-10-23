@@ -107,3 +107,5 @@ kurulum betiği ile `~/.claude/agents` (ve varsa komutları `~/.claude/commands`
 *2026-10-21: `agents/` klasörü açıldı; `agents/ekip` (yedi rollü geliştirme ekibi: 6 subagent + `/ekip` komutu) eklendi.*
 
 *2026-10-23: `agents/ekip` hız ve token için yeniden düzenlendi: S/M/L modları, birleşik `inceleyici`, dosya üzerinden devir (`.ekip/`), effort/maxTurns/önbellek ayarları; ajan açıklamalarındaki YAML hatası düzeltildi.*
+
+*2026-10-23: `agents/ekip` kontrol düzeltmeleri: L modunda test/denetim raporu devri, Zorunlu bulgu tanımı, PR merge/onay izin kısıtları, `[DURUM: CEVAP]` etiketi, L ajanları için kurulum kontrolü.*

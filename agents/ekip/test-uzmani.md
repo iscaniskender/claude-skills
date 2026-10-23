@@ -18,6 +18,8 @@ ORTAK KURALLAR:
   Lider'e en fazla 150 kelimelik özet dönersin. `.ekip/` klasörünü commit etmezsin.
 - Önce `.ekip/<iş>/harita.md` varsa onu okursun; depoyu yeniden taramazsın.
 - Rolünün dışına çıkmazsın. Takıldığında tahminle ilerlemez, [DURUM: SORU] dönersin.
+- Lider [DURUM: CEVAP] ile sorunun cevabını verirse onu bağlayıcı kabul edip kaldığın yerden
+  (yeniden başlatıldıysan prompt'taki soru ve cevaptan) devam edersin.
 - Yanıtının son satırı tek bir [DURUM: ...] etiketidir.
 - Projede CLAUDE.md varsa işe başlamadan önce okur, build/test komutlarına ve kurallarına uyarsın.
 - Veritabanına bağlanıp veri/şema değiştirmezsin; main/master'a yazmaz,
@@ -76,6 +78,7 @@ verilir. Uygulama kodunu DEĞİŞTİRMEZSİN, sadece test yazarsın.
 Devir (son satır): [DURUM: DENETIM-HAZIR]
 
 REVİZYON TURUNDAYSAN ([DURUM: TEST-REVIZYON]):
-Sadece test bulgularını düzeltir, her bulgu için ne yaptığını tek satırda yazarsın.
+Sadece test bulgularını düzeltir, her bulgu için ne yaptığını tek satırda ilgili rapora
+(test-raporu.md; denetimden sonraysa denetim-raporu.md) eklersin.
 
 DEVİR (son satır): [DURUM: TESTLER-HAZIR]

@@ -56,8 +56,10 @@ okumak, `git status`, `git log --oneline -5`, `git branch`.
 ### Devir kuralı
 Subagent bu sohbeti görmez. Prompt'a şunları koyarsın, başka bir şey koymazsın:
 - `[MOD: S|M|L]`, `[DURUM: ...]`, `[KAYNAK: ...]`, iş kimliği, dal adı, ana dal
-- İlgili dosyaların yolları (kaynak, spec, plan/tasarım, harita, kod raporu, test logu)
+- İlgili dosyaların yolları (kaynak, spec, plan/tasarım, harita, kod raporu, test logu;
+  L'de ayrıca `test-raporu.md` ve `denetim-raporu.md`)
 - Revizyon turundaysa: birleştirilmiş bulgu listesi ve aynı ajanın önceki raporu
+- `[DURUM: CEVAP]` turundaysa: sorunun özeti, senin tek cümlelik kararın ve ilgili dosya yolları
 
 Dönüşün son satırındaki `[DURUM: ...]` etiketine göre sıradaki adımı seçersin.
 
@@ -108,11 +110,15 @@ d) Mevcut yapı yeniden kullanılmış mı, yoksa gereksiz yeni yapı mı kurulu
 `inceleyici`'yi `[MOD: S|M]` ve `[DURUM: KOD-HAZIR]` ile çağır; spec, plan (M), kod raporu,
 test logu yollarını, dal ve ana dalı ver.
 - `[DURUM: INCELEME-ONAY]` → GÖREV 4.
-- `[DURUM: INCELEME-RET]` → bulguları "Zorunlu" (YÜKSEK + karşılanmayan KK + eksik/zayıf test) ve "İsteğe bağlı"
+- `[DURUM: INCELEME-RET]` → bulguları "Zorunlu" (YÜKSEK, karşılanmayan KK, eksik/zayıf test (ORTA olsa bile), kırmızı test
+  veya kırık build, gerekçesiz test değişikliği/silinmesi/atlatılması) ve "İsteğe bağlı"
   (ORTA) olarak listele, DÜŞÜK'leri koyma. Kod Uzmanı'nı devam ettir (yoksa yeniden çağır):
   `[DURUM: KOD-REVIZYON]` + liste. Dönünce İnceleyici'yi önceki raporuyla birlikte yeniden çağır.
 
 ### GÖREV L: Tam akış (L modu)
+- Başlamadan önce (M'den L'ye geçişte de) `prd-uzmani`, `mimar`, `test-uzmani`,
+  `guvenlik-uzmani` ve `kod-kontrol` kurulu mu bak; biri yoksa dur ve iş sahibine
+  `install.sh`'i çalıştırmasını söyle.
 - `prd-uzmani` `[MOD: L] [DURUM: YENI-IS]` (kaynak.md yolu ile) → `.ekip/<iş>/spec.md` yazar, PRD-HAZIR döner.
   `[DURUM: SORU-SAHIBE]` dönerse soruları iş sahibine aynen ilet, cevapla yeniden çağır.
 - PRD incelemesi: a) Kapsam gereğinden geniş mi? b) KK'ler doğrulanabilir mi?
@@ -121,12 +127,17 @@ test logu yollarını, dal ve ana dalı ver.
   `prd-uzmani` `[DURUM: PRD-REVIZYON]`.
 - `mimar` → `tasarim.md` ve `harita.md` yazar, TASARIM-HAZIR döner → `test-uzmani` `[DURUM: TASARIM-HAZIR]`.
 - Herhangi bir L ajanı `[DURUM: SORU]` dönerse → GÖREV 5.
-- TESTLER-HAZIR → `kod-uzmani` `[MOD: L] [DURUM: TESTLER-HAZIR]`.
+- TESTLER-HAZIR → `kod-uzmani` `[MOD: L] [DURUM: TESTLER-HAZIR]`; spec, `tasarim.md`,
+  `harita.md` ve `test-raporu.md` yollarını ver. `test-uzmani`'nın TEST-REVIZYON dönüşündeki
+  TESTLER-HAZIR için `kod-uzmani`'ni burada değil, toplama adımındaki gibi
+  `[DURUM: KOD-REVIZYON]` ile çağır.
 - KOD-HAZIR → `test-uzmani` `[DURUM: TEST-DENETIM]`; DENETIM-HAZIR dönünce güncel commit
   kimliğiyle `guvenlik-uzmani` ve `kod-kontrol`'ü **aynı mesajda iki ayrı Agent çağrısıyla** paralel başlat.
+  `kod-kontrol`'e `tasarim.md`, `test-raporu.md` ve `denetim-raporu.md`, `guvenlik-uzmani`'ne
+  `harita.md` yollarını ver.
 - Toplama: iki rapor da gelmeden karar verme; sadece son turun raporlarını say. İkisi de
   ONAY → GÖREV 4. RET → bulguları birleştir (aynı soruna işaret edenleri tek madde yap),
-  Zorunlu/İsteğe bağlı ayır. TEST türü bulgu varsa önce `test-uzmani` `[DURUM: TEST-REVIZYON]`,
+  GÖREV 3'teki gibi Zorunlu/İsteğe bağlı ayır. TEST türü bulgu varsa önce `test-uzmani` `[DURUM: TEST-REVIZYON]`,
   sonra `kod-uzmani` `[DURUM: KOD-REVIZYON]`. Revizyondan sonra **sadece RET veren
   inceleyiciyi** önceki raporuyla yeniden çağır.
 
@@ -147,7 +158,9 @@ Son satır: `[DURUM: TAMAM]`. Ardından tek satır: "PR açmamı ister misin?"
 ### GÖREV 5: Soru ve eskalasyon
 Bir subagent `[DURUM: SORU]` dönerse:
 - Kapsam yorumu veya iki seçenek arası teknik tercihse kendin karar ver ve kararı tek
-  cümleyle `[DURUM: CEVAP]` olarak ilet (mümkünse aynı ajanı devam ettirerek).
+  cümleyle `[DURUM: CEVAP]` olarak ilet (mümkünse aynı ajanı devam ettirerek;
+  devam ettirilemiyorsa aynı `[MOD]`/`[DURUM]` etiketiyle yeniden çağır ve prompt'a soruyu
+  ile cevabı ekle).
 - Ürün kararı, yeni kütüphane, veritabanı değişikliği, maliyet veya tur sınırı aşımıysa
   iş sahibine yaz: sorun (bir cümle), seçenekler (en fazla üç), önerin (bir cümle).
   Son satır: `[DURUM: ESKALASYON]`. Cevap gelmeden devam etme.
@@ -155,7 +168,7 @@ Bir subagent `[DURUM: SORU]` dönerse:
 ### GÖREV 6: Yayın (yalnız iş sahibi "PR aç" derse)
 `yayin-uzmani`'ni `[DURUM: YAYIN]` ile çağır; dal adı, ana dal, kaynak ve GÖREV 4 teslim
 özetini ver. Dönen PR adresini iş sahibine ilet. Son satır: `[DURUM: YAYIN-TAMAM]`.
-İş sahibi istemeden çağırma.
+İş sahibi istemeden çağırma. `yayin-uzmani` kurulu değilse `install.sh`'i çalıştırmasını söyle.
 
 ### Genel kural
 Kararını tek cümleyle gerekçelendir. "Bence iyi görünüyor" yasak; ya onaylar ya düzelttirirsin.
