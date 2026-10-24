@@ -22,6 +22,7 @@ cd ~/.claude/skills && git pull
 |---|---|
 | [`using-superpowers`](using-superpowers) | Herhangi bir konuşmaya başlarken; skill'lerin nasıl bulunup çağrılacağını belirler, herhangi bir yanıttan (açıklayıcı sorular dahil) önce skill çağrımını zorunlu kılar. |
 | [`using-agent-skills`](using-agent-skills) | Agent skill'lerini keşfeder ve çağırır; hangi skill'in mevcut göreve uyduğunu belirleyen meta-skill. |
+| [`find-skills`](find-skills) | "X için skill var mı?", "X'i nasıl yaparım?" gibi sorularda skills.sh ekosisteminde (`npx skills find`) yeni skill arar; kurulum sayısı, kaynak ve GitHub yıldızına bakarak önerir. Kaynak: [vercel-labs/skills](https://github.com/vercel-labs/skills). |
 | [`context-engineering`](context-engineering) | Yeni bir oturuma başlarken, agent çıktı kalitesi düştüğünde veya görevler arası geçişte context/rules dosyalarını optimize eder. |
 | [`brainstorming`](brainstorming) | Herhangi bir yaratıcı çalışmadan (özellik oluşturma, bileşen ekleme, davranış değiştirme) önce kullanıcı niyetini, gereksinimleri ve tasarımı keşfeder. |
 | [`interview-me`](interview-me) | Belirsiz isteklerde kullanıcının gerçekte ne istediğini tek tek sorularla ~%95 güvene ulaşana kadar çıkarır. |
@@ -107,3 +108,5 @@ kurulum betiği ile `~/.claude/agents` (ve varsa komutları `~/.claude/commands`
 *2026-10-21: `agents/` klasörü açıldı; `agents/ekip` (yedi rollü geliştirme ekibi: 6 subagent + `/ekip` komutu) eklendi.*
 
 *2026-10-23: `agents/ekip` hız ve token için yeniden düzenlendi: S/M/L modları, birleşik `inceleyici`, dosya üzerinden devir (`.ekip/`), effort/maxTurns/önbellek ayarları; ajan açıklamalarındaki YAML hatası düzeltildi.*
+
+*2026-10-24: `find-skills` skill'i [vercel-labs/skills](https://github.com/vercel-labs/skills) reposundan (commit `a80e4c9`) olduğu gibi eklendi.*
