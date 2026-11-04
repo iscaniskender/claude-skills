@@ -95,7 +95,7 @@ kurulum betiği ile `~/.claude/agents` (ve varsa komutları `~/.claude/commands`
 
 | Klasör | Ne yapar |
 |---|---|
-| [`agents/ekip`](agents/ekip) | Modlu geliştirme ekibi: Takım Lideri (`/ekip` komutu) işin boyutuna göre S/M/L seçer. S/M'de Kod Uzmanı + İnceleyici (2 subagent), L'de PRD, Mimar, Test, Kod, Güvenlik, Kod Kontrol; isteğe bağlı Yayın Uzmanı (PR). `/ekip [s\|m\|l] azure <no>` veya `/ekip [s\|m\|l] <anlatım>`. Kurulum: `sh agents/ekip/install.sh` (proje yolu verilirse izin kısıtlarını da ekler). |
+| [`agents/ekip`](agents/ekip) | Modlu geliştirme ekibi: Takım Lideri (`/ekip` komutu) işin boyutuna göre S/M/L seçer. S/M'de Kod Uzmanı + İnceleyici (2 subagent), L'de PRD, Mimar, Test, Kod, Güvenlik, Kod Kontrol; isteğe bağlı Yayın Uzmanı (PR). Kod yazmadan `/ekip incele <dal\|pr no\|calisma>` ve `/ekip analiz <soru>`. Ana dal ve korumalı dallar projedeki `.claude/ekip.json` ile ayarlanır. Kurulum: `sh agents/ekip/install.sh` (proje yolu verilirse izin kısıtlarını da ekler). |
 
 ---
 
@@ -110,3 +110,5 @@ kurulum betiği ile `~/.claude/agents` (ve varsa komutları `~/.claude/commands`
 *2026-10-23: `agents/ekip` hız ve token için yeniden düzenlendi: S/M/L modları, birleşik `inceleyici`, dosya üzerinden devir (`.ekip/`), effort/maxTurns/önbellek ayarları; ajan açıklamalarındaki YAML hatası düzeltildi.*
 
 *2026-10-24: `find-skills` skill'i [vercel-labs/skills](https://github.com/vercel-labs/skills) reposundan (commit `a80e4c9`) olduğu gibi eklendi.*
+
+*2026-11-04: `agents/ekip`: proje başına ana dal/korumalı dal ayarı (`.claude/ekip.json`), veritabanı değişikliği kuralları ve kontrolleri, `/ekip incele` ve `/ekip analiz` görevleri eklendi.*

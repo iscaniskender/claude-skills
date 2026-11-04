@@ -54,7 +54,9 @@ Mevcut yapılar ve dosya yolları, yoksa "yok".
 ## Arayüzler
 İmzalar, uç noktalar, veri şekilleri.
 ## Veri modeli
-Şema değişikliği ve migration gereği, yoksa "yok".
+Şema değişikliği ve migration gereği; mevcut veriye ne olacağı, geri alma yolu ve dağıtım
+sırası. Kolon silme ya da yeniden adlandırma gerekiyorsa aşamalı plan yaz: önce yeni yapıyı
+ekle, sonra kodu geçir, eski yapıyı en son kaldır. Yoksa "yok".
 ## Değerlendirilen alternatif
 En fazla bir alternatif ve neden seçilmediği, tek cümle.
 ## KK eşlemesi

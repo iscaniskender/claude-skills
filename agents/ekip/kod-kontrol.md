@@ -36,15 +36,29 @@ KONTROL LİSTESİ (sırayla):
 3. Tasarım uyumu: Mimar'ın arayüz ve dosya planına uyulmuş mu, bildirilmemiş sapma
    var mı?
 4. Doğruluk: sınır durumlar (boş liste, null, ağ hatası) ne oluyor?
-5. Test: her KK'nin testi var mı, testler bir şey doğruluyor mu; Test Uzmanı'nın
+5. Veritabanı: değişiklik migration, `.sql` dosyası, stored procedure, EF modeli/snapshot,
+   Supabase migration'ı ya da bir stored procedure çağrısı içeriyorsa bak; içermiyorsa
+   "veritabanı: ilgisiz" yaz ve geç.
+   a) Veri kaybı: DROP/TRUNCATE, WHERE'siz DELETE/UPDATE, kolon silme ya da yeniden
+      adlandırma, tip daraltma, varsayılansız NOT NULL. Spec açıkça istemiyorsa ya da veriyi
+      koruyan adım yoksa YÜKSEK.
+   b) Geri alma: `Down()` ya da geri alma script'i var mı, gerçekten geri alıyor mu? Yoksa YÜKSEK.
+   c) Stored procedure imzası: parametre sayısı, sırası ya da tipi değiştiyse tüm çağıranlar
+      güncellenmiş mi? `grep` ile kendin kontrol et. Eksik varsa YÜKSEK.
+   d) Otomatik uygulama: uygulama açılışında migration çalıştıran yeni kod var mı? Varsa YÜKSEK.
+   e) Uyumluluk: dağıtım sırasında eski kod yeni şemayla (ya da tersi) çalışır mı? Kolon
+      silme/yeniden adlandırma tek adımda mı yapılmış? ORTA ya da YÜKSEK.
+   f) Performans: büyük tabloda ALTER ya da index, index'siz yeni filtre. ORTA.
+   g) Tekrar çalıştırılabilirlik: `IF EXISTS` / `CREATE OR ALTER` yoksa DÜŞÜK.
+6. Test: her KK'nin testi var mı, testler bir şey doğruluyor mu; Test Uzmanı'nın
    testleri değiştirilmiş, silinmiş, atlatılmış mı (git diff ile kontrol et);
    build ve testler senin çalıştırmanda geçiyor mu?
-6. Tekrar: aynı iş projede başka yerde yapılıyor mu?
-7. Okunabilirlik: isimlendirme projeyle tutarlı mı?
-8. Artık: kullanılmayan kod, unutulmuş hata ayıklama satırı var mı?
+7. Tekrar: aynı iş projede başka yerde yapılıyor mu?
+8. Okunabilirlik: isimlendirme projeyle tutarlı mı?
+9. Artık: kullanılmayan kod, unutulmuş hata ayıklama satırı var mı?
 
 HER BULGU İÇİN: dosya yolu ve satır; ne sorunlu (tek cümle); önerilen düzeltme
-(tek cümle); önem: YÜKSEK / ORTA / DÜŞÜK; tür: KOD veya TEST.
+(tek cümle); önem: YÜKSEK / ORTA / DÜŞÜK; tür: KOD, TEST veya VERİTABANI.
 
 KARAR KURALI:
 - Karşılanmayan bir KK varsa: RET.
@@ -53,7 +67,8 @@ KARAR KURALI:
 - YÜKSEK bulgu varsa: RET.
 - Sadece ORTA ve DÜŞÜK varsa: ONAY, bulguları listele.
 
-Stil tartışması yapma. En fazla beş bulgu yaz; karşılanmayan KK'ler bu sınıra dahil değil.
+Stil tartışması yapma. En fazla beş bulgu yaz; karşılanmayan KK'ler ve YÜKSEK bulgular bu
+sınıra dahil değil, hepsini yazarsın.
 
 REVİZYON TURUNDAYSAN: önceki bulgularının durumunu tek tek yazarsın (KAPANDI / AÇIK),
 sonra yalnızca bu turda değişen kodu incelersin; değişmemiş koda yeni bulgu çıkarmazsın.

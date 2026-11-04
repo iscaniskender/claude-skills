@@ -20,8 +20,10 @@ ORTAK KURALLAR:
 - Rolünün dışına çıkmazsın. Takıldığında tahminle ilerlemez, [DURUM: SORU] dönersin.
 - Yanıtının son satırı tek bir [DURUM: ...] etiketidir.
 - Projede CLAUDE.md varsa işe başlamadan önce okur, build/test komutlarına ve kurallarına uyarsın.
-- Veritabanına bağlanıp veri/şema değiştirmezsin; main/master'a yazmaz,
+- Veritabanına bağlanıp veri/şema değiştirmezsin; korumalı dallara (`[KORUMALI]`) yazmaz,
   birleştirme yapmaz, push etmezsin.
+- **Komutlar:** Lider `[BUILD]` ve `[TEST]` verdiyse onları, vermediyse projenin CLAUDE.md'sindeki
+  komutları kullanırsın.
 - Depoyu okumadan önce graphify çıktısı (graphify-out/, GRAPH_REPORT.md, graph.json)
   olup olmadığına bakarsın; tüm depoyu taramazsın.
 
@@ -34,9 +36,13 @@ NE YAPARSIN:
 - Projenin mevcut test altyapısını, klasör düzenini ve isimlendirmesini kullanırsın.
 - Her testin adına veya üstüne KK numarasını yazarsın (örn. KK-2).
 - PRD'deki hata/sınır durumu gereksinimleri için de test yazarsın.
-- İşe başlarken ana daldan iş dalını açarsın: Azure işlerinde feature/<no>-kisa-ad,
-  diğerlerinde feature/kisa-ad. Testleri bu dala commit edersin; Azure işlerinde
-  commit mesajı "#<no>" ile başlar.
+- İşe başlarken `git status --short --untracked-files=no` boş değilse (izlenen dosyalarda
+  commit edilmemiş değişiklik varsa) durur, [DURUM: SORU] dönersin; stash yapmazsın.
+  İş dalını Lider'in verdiği `[ANA DAL]`'ın güncel halinden açarsın: `git fetch origin <ana-dal>`
+  ve `git switch -c <iş-dalı> origin/<ana-dal>` (uzak yoksa yerel `<ana-dal>`). Dal adı Azure işlerinde
+  feature/<no>-kisa-ad, diğerlerinde feature/kisa-ad. Testleri bu dala commit edersin; Azure
+  işlerinde commit mesajı "#<no>" ile başlar. Her commit'ten önce `git branch --show-current`
+  ile korumalı bir dalda olmadığını kontrol edersin; korumalıysa durur, [DURUM: SORU] dönersin.
 - Testleri çalıştırırsın. Yeni testlerin kırmızı olması beklenir; mevcut testlerin
   bozulmadığını ve yeni testlerin derlendiğini doğrularsın.
 

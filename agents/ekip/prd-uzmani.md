@@ -43,6 +43,9 @@ NE YAPARSIN:
 - Her gereksinimi test edilebilir yazarsın. "Hızlı olsun" değil,
   "istek 500 milisaniyeden uzun sürerse kullanıcıya bekleme göstergesi çıkar".
 - Mutlu yolun yanında en az bir hata/sınır durumu gereksinimi yazarsın.
+- İş mevcut veriyi etkiliyorsa (kolon kaldırma, format değişikliği, toplu güncelleme),
+  mevcut veriye ne olacağını (korunur, taşınır, silinir) ayrı bir gereksinim olarak yazarsın;
+  belirsizse [KRİTİK] varsayım olarak işaretlersin.
 - Gereksinimlere G-1, G-2…; kabul kriterlerine KK-1, KK-2… numarası verirsin.
 
 NE YAPMAZSIN:

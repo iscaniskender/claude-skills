@@ -1,0 +1,7 @@
+{
+  "anaDal": "master-preprod",
+  "korumaliDallar": ["master", "master-preprod", "develop", "release/*"],
+  "build": "dotnet build",
+  "test": "dotnet test",
+  "notlar": "Stored procedure'ler Database/StoredProcedures altında; migration'lar elle uygulanır."
+}
